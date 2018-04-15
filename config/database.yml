@@ -24,6 +24,8 @@ default: &default
 development:
   <<: *default
   database: bdd-app_development
+  username: juan
+  password: 21.djjdrpgp09
 
   # The specified database role being used to connect to postgres.
   # To create additional roles in postgres see `$ createuser --help`.
@@ -55,9 +57,11 @@ development:
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
-test:
+test: &test
   <<: *default
   database: bdd-app_test
+  username: juan
+  password: 21.djjdrpgp09
 
 # As with config/secrets.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
@@ -83,3 +87,6 @@ production:
   database: bdd-app_production
   username: bdd-app
   password: <%= ENV['BDD-APP_DATABASE_PASSWORD'] %>
+
+cucumber:
+  <<: *test
