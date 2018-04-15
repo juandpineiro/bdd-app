@@ -46,27 +46,44 @@ RSpec.describe BooksController do
   #   end
   # end
 
-  # describe "POST #create" do
-  #   context "with valid params" do
-  #     it "creates a new Book" do
-  #       expect {
-  #         post :create, params: {book: valid_attributes}, session: valid_session
-  #       }.to change(Book, :count).by(1)
-  #     end
+  describe "POST #create" do
+    let(:book) { FactoryBot.build_stubbed(:book) }
+    let(:params) { { :name => 'Moby Dick', :author => 'Herman Melville' } }
 
-  #     it "redirects to the created book" do
-  #       post :create, params: {book: valid_attributes}, session: valid_session
-  #       expect(response).to redirect_to(Book.last)
-  #     end
-  #   end
+    before do
+      allow(book).to receive(:save)
+      allow(user).to receive_message_chain(:books, :build).and_return(book)
+    end
 
-  #   context "with invalid params" do
-  #     it "returns a success response (i.e. to display the 'new' template)" do
-  #       post :create, params: {book: invalid_attributes}, session: valid_session
-  #       expect(response).to be_success
-  #     end
-  #   end
-  # end
+    context 'when the book is succesfully saved' do
+      before do
+        allow(book).to receive(:save).and_return(true)
+        
+        post :create, :params => { :book => params }
+      end
+      
+      it 'redirects to the book show page' do
+        expect(response).to redirect_to(book_path(book))
+      end
+      
+      it 'redirects to the book show page' do
+        expect(flash[:notice]).to eq('Book was successfully created.')
+      end
+    end
+    
+    context "when the book can’t be saved" do
+      before do
+        allow(book).to receive(:save).and_return(false)
+        
+        post :create, :params => { :book => params }
+      end
+      
+      it "redirects back to the new page" do
+        expect(response).to render_template(:new)
+      end
+    end
+ 
+  end
 
   # describe "PUT #update" do
   #   context "with valid params" do
